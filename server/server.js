@@ -6,6 +6,7 @@ const app = express();
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const serveStatic = require('serve-static');
 
 
 // Connect to MongoDB
@@ -21,7 +22,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// ...
+// Serve static files from the client/build directory
+app.use(serveStatic(path.join(__dirname, '/client/build')));
 
 app.use((err, req, res, next) => {
   console.error(err);

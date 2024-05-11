@@ -1,6 +1,6 @@
 import React from "react";
 import Avatar from "../../Avatar";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { BASE_URL } from '../../../utils/config'
@@ -11,7 +11,7 @@ import { deletePost, reportPost } from "../../../redux/actions/postAction";
 const CardHeader = ({ post }) => {
   const { auth, socket } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate(); // useNavigate instead of useHistory
 
   const handleEditPost = () => {
     dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } });
@@ -20,11 +20,10 @@ const CardHeader = ({ post }) => {
   const handleDeletePost = () => {
     if(window.confirm("Are you sure?")){
       dispatch(deletePost({ post, auth, socket }));
-      return history.push("/");
+      return navigate("/"); // use navigate instead of history.push
     }
     
   };
-
 
   const handleReportPost = () => {
     dispatch(reportPost({post, auth}));
