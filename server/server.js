@@ -1,57 +1,35 @@
-require('dotenv').config()
+// Load environment variables from .env file
+require('dotenv').config();
+
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const SocketServer = require('./socketServer');
-const corsOptions = {
-  Credential: 'true',
-  
-};
-
-
 const app = express();
-
-app.use(express.json())
-app.options("*" , cors(corsOptions));
-app.use(cors(corsOptions));
-app.use(cookieParser())
+const logger = require('morgan');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
 
-//#region // !Socket
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
 
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
+// ...
 
-io.on('connection', socket => {
-    SocketServer(socket);
-})
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send({ message: 'Internal Server Error' });
+});
 
-
-
-//#region // !Routes
-app.use('/api', require('./routes/authRouter'));
-app.use('/api', require('./routes/userRouter'));
-app.use('/api', require('./routes/postRouter'));
-app.use('/api', require('./routes/commentRouter'));
-app.use('/api', require('./routes/adminRouter'));
-app.use('/api', require('./routes/notifyRouter'));
-app.use('/api', require('./routes/messageRouter'));
-//
-
-
-const URI = process.env.MONGODB_URL;
-mongoose.connect(URI)
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((error) => {
-    console.error("Error connecting to MongoDB:", error);
-  });
-
-
-const port = process.env.PORT || 5173;
-http.listen(port, () => {
-  console.log("Listening on ", port);
+// Start the server
+const PORT = process.env.PORT || 5173;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
