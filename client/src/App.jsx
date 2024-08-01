@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import io from 'socket.io-client';
+import store from '../src/redux/store';
 
 import PageRender from "./customRouter/PageRender";
 import PrivateRouter from "./customRouter/PrivateRouter";
@@ -90,5 +91,12 @@ const App = () => {
     </Router>
   );
 };
+
+const root = createRoot(document.getElementById('root'));
+root.render(
+  <Provider store={store}>
+    <App/>
+  </Provider>
+);
 
 export default App;

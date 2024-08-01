@@ -1,11 +1,15 @@
-module.exports = {
-    server: {
-      proxy: {
-        '/api': {
-          target: 'http://localhost:5173',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  //... other config options...
+  build: {
+    mimeTypes: {
+      js: 'application/javascript',
     },
-  };
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5173',
+    },
+  },
+});

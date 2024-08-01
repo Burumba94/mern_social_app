@@ -3,10 +3,12 @@ require('dotenv').config();
 
 const express = require('express');
 const app = express();
+const path = require('path');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const serveStatic = require('serve-static');
+const cors = require('cors');
 
 
 // Connect to MongoDB
@@ -23,7 +25,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Serve static files from the client/build directory
-app.use(serveStatic(path.join(__dirname, '/client/build')));
+app.use(express.static(path.join(__dirname, 'client')));
+
+//Enable cors for routes
+app.use(cors());
+
+
 
 app.use((err, req, res, next) => {
   console.error(err);
